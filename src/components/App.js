@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from 'react';
+
 import Header from './Header';
 import Loader from './Loader';
 import Error from './Error';
@@ -6,8 +7,12 @@ import Main from './Main';
 import StartScreen from './StartScreen';
 import Question from './Question';
 import NextButton from './NextButton';
-import Progress from '../Progress';
-import Finished from '../Finished';
+import Progress from './Progress';
+import Finished from './Finished';
+import Footer from './Footer';
+import Timer from './Timer';
+
+const SECS_PER_QSTN = 30;
 
 const initialState = {
   questions: [],
@@ -17,6 +22,7 @@ const initialState = {
   answer: null,
   points: 0,
   highscore: 0,
+  secondsLeft: null,
 };
 
 function reducer(state, action) {
@@ -37,6 +43,7 @@ function reducer(state, action) {
       return {
         ...state,
         status: 'active',
+        secondsLeft: state.questions.length * SECS_PER_QSTN,
       };
 
     case 'dataFailed':
@@ -75,6 +82,13 @@ function reducer(state, action) {
         questions: state.questions,
       };
 
+    case 'tick':
+      return {
+        ...state,
+        secondsLeft: state.secondsLeft - 1,
+        status: state.secondsLeft === 0 ? 'complete' : state.status,
+      };
+
     default:
       throw new Error('Action unknown');
   }
@@ -82,7 +96,8 @@ function reducer(state, action) {
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { status, questions, index, answer, points, highscore } = state;
+  const { status, questions, index, answer, points, highscore, secondsLeft } =
+    state;
 
   const numQuestions = questions.length;
 
@@ -131,12 +146,16 @@ export default function App() {
               dispatch={dispatch}
               answer={answer}
             />
-            <NextButton
-              dispatch={dispatch}
-              answer={answer}
-              index={index}
-              numQuestions={numQuestions}
-            />
+            <Footer>
+              <Timer secondsLeft={secondsLeft} dispatch={dispatch} />
+
+              <NextButton
+                dispatch={dispatch}
+                answer={answer}
+                index={index}
+                numQuestions={numQuestions}
+              />
+            </Footer>
           </>
         )}
 

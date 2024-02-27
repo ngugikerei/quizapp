@@ -144,6 +144,10 @@ progress {
   float: right;
 }
 
+.btn-timer {
+  float: left;
+}
+
 .options {
   display: flex;
   flex-direction: column;
