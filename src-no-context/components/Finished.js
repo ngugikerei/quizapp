@@ -1,7 +1,4 @@
-import { useQuiz } from '../contexts/QuizContext';
-
-export default function Finished() {
-  const { points, maxPoints, highscore, dispatch } = useQuiz();
+export default function Finished({ points, maxPoints, highscore, dispatch }) {
   const percentage = (points / maxPoints) * 100;
 
   let emoji;
